@@ -82,5 +82,75 @@ describe('jsonExtend', () => {
 
     expect(result).toEqual({ a: 2, list: [0, 1, 2, 3], config: { a: 1, b: 2 } });
   });
+
+  it('returns cloned primitive when patch is primitive', () => {
+    const result = jsonExtend({ name: 'Old' }, 'newValue');
+
+    expect(result).toBe('newValue');
+  });
+
+  it('creates object when target is primitive and patch is object', () => {
+    const result = jsonExtend('primitive', { name: 'New' });
+
+    expect(result).toEqual({ name: 'New' });
+  });
+
+  it('treats missing target arrays as empty', () => {
+    const result = jsonExtend({}, { list: { $append: [1, 2] } });
+
+    expect(result).toEqual({ list: [1, 2] });
+  });
+
+  it('throws when $extend is not a plain object', () => {
+    expect(() =>
+      jsonExtend(
+        { config: { a: 1 } },
+        { config: { $extend: 123 } as unknown as Record<string, unknown> }
+      )
+    ).toThrow('$extend expects a plain object');
+  });
+
+  it('invokes predicates supplied to $remove', () => {
+    const predicate = jest.fn(() => true);
+
+    const result = jsonExtend(
+      { items: [1] },
+      {
+        items: {
+          $remove: predicate
+        }
+      }
+    );
+
+    expect(result.items).toEqual([]);
+    expect(predicate).toHaveBeenCalled();
+  });
+
+  it('invokes replacement functions supplied to $replace', () => {
+    const filter = jest.fn((value: number) => value === 1);
+    const replacement = jest.fn((value: number) => value * 10);
+
+    const result = jsonExtend(
+      { items: [1] },
+      {
+        items: {
+          $replace: [{ filter, replacement }]
+        }
+      }
+    );
+
+    expect(result.items).toEqual([10]);
+    expect(filter).toHaveBeenCalled();
+    expect(replacement).toHaveBeenCalled();
+  });
+
+  it('does not mutate the original target object', () => {
+    const target = { nested: { list: [1, 2] } };
+    const result = jsonExtend(target, { nested: { $extend: { flag: true } } });
+
+    expect(result).toEqual({ nested: { list: [1, 2], flag: true } });
+    expect(target).toEqual({ nested: { list: [1, 2] } });
+    expect(result.nested).not.toBe(target.nested);
+  });
 });
 

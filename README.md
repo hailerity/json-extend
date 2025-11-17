@@ -46,6 +46,98 @@ const patched = jsonExtend(
 );
 ```
 
+## Operators
+
+### `$extend` – deep object merge
+
+- **Use when:** You want to merge in nested properties without replacing the entire object.
+- **Behavior:** Deep merges a plain-object payload into the existing object. Keys in the patch override target keys; unmatched keys are preserved.
+- **Example:**
+
+```ts
+jsonExtend(
+  { profile: { name: 'Ada', links: { github: '@ada' } } },
+  { profile: { $extend: { links: { twitter: '@ada' } } } }
+);
+// → { profile: { name: 'Ada', links: { github: '@ada', twitter: '@ada' } } }
+```
+
+### `$prepend` – add items to the beginning of an array
+
+- **Use when:** You need to insert items at the front without mutating the source array.
+- **Behavior:** Treats the existing value as an array (or empty if absent) and concatenates new values before it.
+- **Example:**
+
+```ts
+jsonExtend({ queue: ['b', 'c'] }, { queue: { $prepend: ['a'] } });
+// → { queue: ['a', 'b', 'c'] }
+```
+
+### `$append` – add items to the end of an array
+
+- **Use when:** You want to push items to the tail immutably.
+- **Behavior:** Treats the existing value as an array (or empty) and concatenates new values after it.
+- **Example:**
+
+```ts
+jsonExtend({ queue: ['a', 'b'] }, { queue: { $append: ['c'] } });
+// → { queue: ['a', 'b', 'c'] }
+```
+
+### `$remove` – filter array entries
+
+- **Use when:** You need to drop items matching a predicate.
+- **Behavior:** Accepts a predicate `(item, index, array) => boolean`. Items for which the predicate returns `true` are removed.
+- **Example:**
+
+```ts
+jsonExtend(
+  { list: [1, 2, 3, 4] },
+  { list: { $remove: n => n % 2 === 0 } }
+);
+// → { list: [1, 3] }
+```
+
+### `$replace` – replace items in place
+
+- **Use when:** You want to substitute items based on custom logic.
+- **Behavior:** Takes an array of rules. Each rule has a `filter` predicate and a `replacement`. When `filter` returns `true`, the replacement value is used. Replacement can be:
+  - A literal value
+  - A function `(item, index, array) => value | value[]`
+  - An array to splice multiple items in place of one
+- **Example (single value):**
+
+```ts
+jsonExtend(
+  { tags: ['red', 'green', 'blue'] },
+  {
+    tags: {
+      $replace: [{ filter: tag => tag === 'green', replacement: 'lime' }]
+    }
+  }
+);
+// → { tags: ['red', 'lime', 'blue'] }
+```
+
+- **Example (multiple values):**
+
+```ts
+jsonExtend(
+  { items: [2, 3, 4] },
+  {
+    items: {
+      $replace: [
+        {
+          filter: n => n === 3,
+          replacement: n => [n * 10, n * 10 + 1]
+        }
+      ]
+    }
+  }
+);
+// → { items: [2, 30, 31, 4] }
+```
+
 ## Scripts
 
 - `npm run build` – bundler output (`dist/`) with types and sourcemaps.
