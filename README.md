@@ -1,5 +1,9 @@
 # json-extend
 
+[![npm version](https://img.shields.io/npm/v/json-extend.svg)](https://www.npmjs.com/package/json-extend)
+[![npm downloads](https://img.shields.io/npm/dm/json-extend.svg)](https://www.npmjs.com/package/json-extend)
+[![license](https://img.shields.io/github/license/hailerity/json-extend.svg)](LICENSE)
+
 Custom JSON patch processor that keeps your data immutable while supporting a lightweight DSL for nested objects and arrays.
 
 ## Features
@@ -8,6 +12,16 @@ Custom JSON patch processor that keeps your data immutable while supporting a li
 - `$extend`, `$prepend`, `$append`, `$remove`, and `$replace` operators.
 - Works on plain JSON data but keeps user-provided predicates or mappers callable.
 - Dual ESM/CJS outputs via `tsup`.
+
+## Installation
+
+```bash
+npm install json-extend
+# or
+pnpm add json-extend
+# or
+yarn add json-extend
+```
 
 ## Usage
 

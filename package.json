@@ -3,7 +3,19 @@
   "version": "0.1.0",
   "description": "Immutable JSON patch DSL with extend, prepend, append, replace, and remove operators.",
   "license": "MIT",
-  "author": "",
+  "author": {
+    "name": "Hai Le",
+    "email": "hailerity@gmail.com",
+    "url": "https://github.com/hailerity"
+  },
+  "homepage": "https://github.com/hailerity/json-extend#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hailerity/json-extend.git"
+  },
+  "bugs": {
+    "url": "https://github.com/hailerity/json-extend/issues"
+  },
   "type": "module",
   "main": "./dist/index.cjs",
   "module": "./dist/index.mjs",
@@ -24,8 +36,15 @@
     "merge",
     "extend",
     "patch",
-    "dsl"
+    "dsl",
+    "json patch",
+    "immutable",
+    "typescript",
+    "deep merge"
   ],
+  "publishConfig": {
+    "access": "public"
+  },
   "engines": {
     "node": ">=18.0.0"
   },
